@@ -43,7 +43,7 @@ export default function HistoryList({ courts }) {
                   </div>
                   vs
                   <div className="flex justify-between">
-                    <p>Team B → {match.team1.join(" & ")} </p>
+                    <p>Team B → {match.team2.join(" & ")} </p>
                     <p
                       className={
                         Number(match.score.split("-")[1]) >
