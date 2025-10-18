@@ -34,7 +34,6 @@ export default function CourtManager({
     setCourts(
       courts.map((court) => {
         if (court.id === courtId) {
-          // กรองผู้เล่นออกจาก beginners/pros ที่กำลังเล่นอยู่
           const availableBeginners = players.beginners.filter(
             (b) => !activePlayers.includes(b)
           );

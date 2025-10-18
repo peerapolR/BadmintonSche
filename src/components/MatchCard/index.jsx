@@ -45,23 +45,23 @@ export default function MatchCard({
           </div>
 
           {court.currentMatch.score ? (
-            <p className="text-green-600 mt-2">
+            <p className="text-green-600 mt-2 text-center font-extrabold">
               Score: {court.currentMatch.score}
             </p>
           ) : (
             <>
-              <div className="flex my-2 justify-between">
+              <div className="flex my-2 justify-between gap-4">
                 <input
                   type="text"
                   placeholder="Score Team A"
-                  className="border p-1 rounded"
+                  className="border p-1 rounded w-full"
                   value={scoreA}
                   onChange={(e) => setScoreA(e.target.value)}
                 />
                 <input
                   type="text"
                   placeholder="Score Team B"
-                  className="border p-1 rounded"
+                  className="border p-1 rounded w-full"
                   value={scoreB}
                   onChange={(e) => setScoreB(e.target.value)}
                 />

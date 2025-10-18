@@ -1,22 +1,13 @@
 export default function HistoryList({ courts }) {
   return (
     <div className="p-4 bg-white rounded shadow mt-4">
-      <h2 className="font-bold text-lg mb-2">Match History</h2>
       {courts.map((court) => (
         <div key={court.id} className="mb-3">
-          <h3 className="font-semibold">Court {court.id}</h3>
+          <h3 className=" font-extrabold text-2xl underline">Court {court.id}</h3>
           {court.history.length === 0 ? (
             <p className="text-gray-500">No matches yet.</p>
           ) : (
-            // <ul className="list-disc ml-6">
-            //   {court.history.map((match, idx) => (
-            //     <li key={idx}>
-            //       {match.team1.join(" + ")} vs {match.team2.join(" + ")} →{" "}
-            //       {match.score}
-            //     </li>
-            //   ))}
-            // </ul>
-            <div className="grid grid-cols-2">
+            <div className="grid md:grid-cols-2">
               {court.history.map((match, idx) => (
                 <div
                   className="border rounded-lg m-3 px-6 pb-4 pt-2 font-extrabold"
