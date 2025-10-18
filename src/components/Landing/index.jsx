@@ -75,7 +75,11 @@ export default function Home() {
   };
 
   const insertMockPlayer = () => {
-    setPlayers(mockPlayers);
+    if (
+      confirm("คุณแน่ใจหรือไม่ว่าต้องการนำรายชื่อ ณ วันที่ 15 oct มาใส่ในระบบ")
+    ) {
+      setPlayers(mockPlayers);
+    }
   };
 
   const handleClearPlayers = () => {
