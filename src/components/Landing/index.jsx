@@ -13,32 +13,36 @@ export default function Home() {
 
   const mockPlayers = {
     beginners: [
-      "เอ๋",
+      "พี่เอ๋",
       "พิม",
-      "พี่หมี",
-      "พี่ปลา",
       "กิ๊ฟ",
       "แจ็คกี้",
-      "เล็ก",
-      "พี่ส้ม",
-      "พี่กุล",
-      "ซาย",
       "เจ",
-      "ป็อบ",
+      "พี่กุล",
+      "เล็ก",
+      "พี่หมี",
+      "พี่ปลา",
+      "พี่ส้ม",
+      "พี่เอี๊ยง",
+      "บุ๊ต",
+      "พี่ใหม่",
+      "พี่กิ๊ฟ",
     ],
     pros: [
       "เซฟ",
-      "เอี๊ยง",
-      "พี",
-      "ไฟต์",
-      "ทัช",
-      "หนึ่ง",
-      "เทน",
+      "เท็น",
       "มี่",
-      "ท็อป",
-      "มันนี่",
-      "เอฟ",
-      "อิ่ง",
+      "ฮัซวา",
+      "ทาม",
+      "พี",
+      "แปง",
+      "แป๊ก",
+      "หนึ่ง",
+      "บีม",
+      "พี่ไฟต์",
+      "พี่ทัช",
+      "เนท",
+      "จูเนียส",
     ],
   };
 
@@ -76,7 +80,7 @@ export default function Home() {
 
   const insertMockPlayer = () => {
     if (
-      confirm("คุณแน่ใจหรือไม่ว่าต้องการนำรายชื่อ ณ วันที่ 15 oct มาใส่ในระบบ")
+      confirm("คุณแน่ใจหรือไม่ว่าต้องการนำรายชื่อ ณ วันที่ 14 Dec มาใส่ในระบบ")
     ) {
       setPlayers(mockPlayers);
     }
@@ -126,7 +130,7 @@ export default function Home() {
           onClick={insertMockPlayer}
           className="bg-amber-600 text-white px-3 py-1 rounded hover:bg-amber-800"
         >
-          Players (15 Oct)
+          Players (14 Dec)
         </button>
       </div>
 
@@ -167,7 +171,6 @@ export default function Home() {
             </div>
 
             <div className="grid md:grid-cols-2 gap-4">
-              {/* Beginners List */}
               <div>
                 <h3 className="font-semibold mb-2 text-blue-600 flex items-center">
                   🏸 Beginners ({players.beginners.length} Players)

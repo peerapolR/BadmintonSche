@@ -1,124 +1,129 @@
-// export function generateTeams(beginners, pros, history) {
-//   if (beginners.length === 0 || pros.length === 0) return null;
-
-//   let possiblePairs = [];
-//   beginners.forEach((b) => {
-//     pros.forEach((p) => {
-//       possiblePairs.push([b, p]);
-//     });
-//   });
-
-//   const playedTeams = history.flatMap((match) => [
-//     match.team1.join(","),
-//     match.team2.join(","),
-//   ]);
-
-//   let filtered = possiblePairs.filter(
-//     (pair) => !playedTeams.includes(pair.join(","))
-//   );
-
-//   if (filtered.length < 2) return null;
-
-//   filtered = filtered.sort(() => Math.random() - 0.5);
-
-//   for (let i = 0; i < filtered.length; i++) {
-//     for (let j = i + 1; j < filtered.length; j++) {
-//       const team1 = filtered[i];
-//       const team2 = filtered[j];
-
-//       const playersSet = new Set([...team1, ...team2]);
-//       if (playersSet.size === team1.length + team2.length) {
-//         return [team1, team2];
-//       }
-//     }
-//   }
-
-//   return null;
-// }
-
 export function generateTeams(beginners, pros, history) {
-  if (beginners.length === 0 || pros.length === 0) return null;
+  if (beginners.length < 2 || pros.length < 2) return null;
 
-  // ✅ 1. นับจำนวนครั้งที่ผู้เล่นแต่ละคนลงเล่น
   const playCount = {};
+  const partnerCount = {};
+
   history.forEach((match) => {
-    [...match.team1, ...match.team2].forEach((player) => {
-      playCount[player] = (playCount[player] || 0) + 1;
+    const players = [...match.team1, ...match.team2];
+
+    players.forEach((p) => {
+      playCount[p] = (playCount[p] || 0) + 1;
+    });
+
+    const p1 = match.team1.join("-");
+    const p2 = match.team2.join("-");
+    partnerCount[p1] = (partnerCount[p1] || 0) + 1;
+    partnerCount[p2] = (partnerCount[p2] || 0) + 1;
+  });
+
+  const getMinPlayers = (arr) => {
+    const min = Math.min(...arr.map((x) => playCount[x] || 0));
+    const filtered = arr.filter((x) => (playCount[x] || 0) === min);
+    return filtered.length >= 2 ? filtered : arr;
+  };
+
+  const candBeg = getMinPlayers(beginners);
+  const candPro = getMinPlayers(pros);
+
+  let pairs = [];
+
+  candBeg.forEach((b) => {
+    candPro.forEach((p) => {
+      const key = `${b}-${p}`;
+      const score =
+        (playCount[b] || 0) +
+        (playCount[p] || 0) +
+        (partnerCount[key] || 0) * 4 +
+        Math.random() * 0.2;
+
+      pairs.push({ team: [b, p], score });
     });
   });
 
-  // ✅ 2. หาแมตช์ล่าสุดเพื่อกันผู้เล่นที่เพิ่งเล่น (ลดโอกาสซ้ำทันที)
-  const lastMatch = history[history.length - 1];
-  const recentPlayers = lastMatch
-    ? [...lastMatch.team1, ...lastMatch.team2]
-    : [];
+  pairs.sort((a, b) => a.score - b.score);
 
-  // ✅ 3. กันผู้เล่นที่เพิ่งเล่นออกจาก pool (ชั่วคราว)
-  const availableBeginners = beginners.filter(
-    (b) => !recentPlayers.includes(b)
-  );
-  const availablePros = pros.filter((p) => !recentPlayers.includes(p));
+  const team1 = pairs[0].team;
+  const used = new Set(team1);
 
-  // ✅ 4. fallback ถ้าผู้เล่นไม่พอ (หลังจากกัน recent ออก)
-  const finalBeginners =
-    availableBeginners.length >= 2 ? availableBeginners : beginners;
-  const finalPros = availablePros.length >= 2 ? availablePros : pros;
+  const team2 = pairs.find(
+    (pair) => !used.has(pair.team[0]) && !used.has(pair.team[1])
+  )?.team;
 
-  // ✅ 5. หาค่าจำนวนการเล่นที่น้อยสุดในแต่ละกลุ่ม
-  const minBeginnerCount = Math.min(
-    ...finalBeginners.map((b) => playCount[b] || 0)
-  );
-  const minProCount = Math.min(...finalPros.map((p) => playCount[p] || 0));
+  return team2 ? [team1, team2] : null;
+}
 
-  // ✅ 6. เลือกเฉพาะคนที่มีจำนวนการเล่น = น้อยสุด (โอกาสเล่นน้อยสุด)
-  const filteredBeginners = finalBeginners.filter(
-    (b) => (playCount[b] || 0) === minBeginnerCount
-  );
-  const filteredPros = finalPros.filter(
-    (p) => (playCount[p] || 0) === minProCount
-  );
+export function generateAllCourtsTeams(beginners, pros, courtsCount, history) {
+  if (beginners.length < courtsCount * 2) return null;
+  if (pros.length < courtsCount * 2) return null;
 
-  // ✅ 7. ถ้าคนไม่พอ (เช่นมีคนที่น้อยสุดน้อยกว่า 2) ให้รวมกลุ่มข้างเคียง
-  const poolBeginners =
-    filteredBeginners.length >= 2 ? filteredBeginners : finalBeginners;
-  const poolPros = filteredPros.length >= 2 ? filteredPros : finalPros;
+  const playCount = {};
+  const partnerCount = {};
 
-  // ✅ 8. สร้างคู่ Beginner + Pro
-  let possiblePairs = [];
-  poolBeginners.forEach((b) => {
-    poolPros.forEach((p) => {
-      possiblePairs.push([b, p]);
+  history.forEach((match) => {
+    const players = [...match.team1, ...match.team2];
+    players.forEach((p) => {
+      playCount[p] = (playCount[p] || 0) + 1;
     });
+
+    const k1 = match.team1.join("-");
+    const k2 = match.team2.join("-");
+    partnerCount[k1] = (partnerCount[k1] || 0) + 1;
+    partnerCount[k2] = (partnerCount[k2] || 0) + 1;
   });
 
-  // ✅ 9. list ทีมที่เคยเล่นแล้ว
-  const playedTeams = history.flatMap((match) => [
-    match.team1.join(","),
-    match.team2.join(","),
-  ]);
+  let remBeg = [...beginners];
+  let remPro = [...pros];
 
-  // ✅ 10. filter กันทีมที่เคยเล่นคู่กันมาแล้ว
-  let filteredPairs = possiblePairs.filter(
-    (pair) => !playedTeams.includes(pair.join(","))
-  );
+  const courts = [];
 
-  if (filteredPairs.length < 2) return null;
+  const selectMinPlayers = (arr, count = 2) => {
+    return [...arr]
+      .sort((a, b) => (playCount[a] || 0) - (playCount[b] || 0))
+      .slice(0, count);
+  };
 
-  // ✅ 11. สุ่มลำดับทีม
-  filteredPairs = filteredPairs.sort(() => Math.random() - 0.5);
+  for (let c = 0; c < courtsCount; c++) {
+    const [b1, b2] = selectMinPlayers(remBeg, 2);
+    const [p1, p2] = selectMinPlayers(remPro, 2);
 
-  // ✅ 12. หาคู่สองทีมที่ไม่มีผู้เล่นซ้ำ
-  for (let i = 0; i < filteredPairs.length; i++) {
-    for (let j = i + 1; j < filteredPairs.length; j++) {
-      const team1 = filteredPairs[i];
-      const team2 = filteredPairs[j];
+    const teams = [
+      { team1: [b1, p1], team2: [b2, p2] },
+      { team1: [b1, p2], team2: [b2, p1] },
+    ];
 
-      const playersSet = new Set([...team1, ...team2]);
-      if (playersSet.size === team1.length + team2.length) {
-        return [team1, team2];
-      }
-    }
+    const scored = teams.map((t) => {
+      const k1 = t.team1.join("-");
+      const k2 = t.team2.join("-");
+
+      const score =
+        (playCount[b1] || 0) +
+        (playCount[b2] || 0) +
+        (playCount[p1] || 0) +
+        (playCount[p2] || 0) +
+        (partnerCount[k1] || 0) * 5 +
+        (partnerCount[k2] || 0) * 5 +
+        Math.random() * 0.1;
+
+      return { ...t, score };
+    });
+
+    scored.sort((a, b) => a.score - b.score);
+
+    const picked = scored[0];
+    courts.push(picked);
+
+    [...picked.team1, ...picked.team2].forEach((p) => {
+      playCount[p] = (playCount[p] || 0) + 1;
+    });
+
+    remBeg = remBeg.filter(
+      (x) => !picked.team1.includes(x) && !picked.team2.includes(x)
+    );
+    remPro = remPro.filter(
+      (x) => !picked.team1.includes(x) && !picked.team2.includes(x)
+    );
   }
 
-  return null; // ไม่มีคู่ที่คนไม่ซ้ำ
+  return courts;
 }

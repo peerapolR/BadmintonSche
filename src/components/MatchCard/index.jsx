@@ -44,7 +44,7 @@ export default function MatchCard({
             </div>
           </div>
 
-          {court.currentMatch.score ? (
+          {/* {court.currentMatch.score ? (
             <p className="text-green-600 mt-2 text-center font-extrabold">
               Score: {court.currentMatch.score}
             </p>
@@ -78,7 +78,7 @@ export default function MatchCard({
                 Save Score
               </button>
             </>
-          )}
+          )} */}
 
           <button
             onClick={() => onNewMatch(court.id)}
