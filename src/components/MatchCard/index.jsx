@@ -2,9 +2,9 @@ import { useState } from "react";
 
 export default function MatchCard({
   court,
-  onSaveScore,
   onNewMatch,
   onRemoveCourt,
+  onClearCourt,
 }) {
   const [scoreA, setScoreA] = useState("");
   const [scoreB, setScoreB] = useState("");
@@ -79,10 +79,20 @@ export default function MatchCard({
               </button>
             </>
           )} */}
+          <button
+            onClick={() => {
+              if (confirm(`ล้างผู้เล่นออกจาก Court ${court.id} ?`)) {
+                onClearCourt(court.id);
+              }
+            }}
+            className="bg-yellow-500 text-white px-3 py-1 rounded w-full mt-2"
+          >
+            🧹 Clear Court
+          </button>
 
           <button
             onClick={() => onNewMatch(court.id)}
-            className="mt-2 bg-gray-700 text-white px-3 rounded"
+            className="mt-2 bg-gray-700 text-white px-3 py-1 rounded w-full"
           >
             New Match
           </button>

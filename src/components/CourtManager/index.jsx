@@ -104,6 +104,12 @@ export default function CourtManager({
     });
   };
 
+  const handleClearCourt = (courtId) => {
+    setCourts((prev) =>
+      prev.map((c) => (c.id === courtId ? { ...c, currentMatch: null } : c))
+    );
+  };
+
   return (
     <div className="p-4">
       <button
@@ -130,6 +136,7 @@ export default function CourtManager({
               court={court}
               onNewMatch={handleNewMatch}
               onRemoveCourt={onRemoveCourt}
+              onClearCourt={handleClearCourt}
             />
           ))}
       </div>
